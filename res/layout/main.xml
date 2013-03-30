@@ -1,0 +1,33 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:minWidth="350dip" 
+        android:orientation="vertical"
+        >
+	<Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Best" />
+	<Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop" />        
+        <EditText
+            android:id="@+id/editLog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:editable="false"
+            android:gravity="top"
+            android:scrollbars="vertical"
+            android:textSize="8pt" >
+
+        </EditText>
+
+    </LinearLayout>
+
+    
