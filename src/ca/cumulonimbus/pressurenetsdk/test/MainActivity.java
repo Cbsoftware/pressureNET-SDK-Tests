@@ -1,19 +1,22 @@
 package ca.cumulonimbus.pressurenetsdk.test;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-import bin.classes.ca.cumulonimbus.pressurenetsdk.CbLocationManager;
+import ca.cumulonimbus.pressurenetsdk.CbService;
 
 public class MainActivity extends Activity {
 
-	CbLocationManager cbLocation;
+	CbService cbService;
+	Intent serviceIntent;
+	
 	Button buttonGo;
+	Button buttonStart;
 	Button buttonStop;
 	EditText editLog;
 	
@@ -22,10 +25,11 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		cbLocation = new CbLocationManager(getApplicationContext());
+		serviceIntent = new Intent(this, CbService.class);
 		
-		buttonGo = (Button) findViewById(R.id.button1);
-		buttonStop = (Button) findViewById(R.id.button2);
+		buttonGo = (Button) findViewById(R.id.buttonShowBest);
+		buttonStop = (Button) findViewById(R.id.buttonStop);
+		buttonStart = (Button) findViewById(R.id.buttonStart);
 
 		editLog = (EditText) findViewById(R.id.editLog);
 		buttonGo.setOnClickListener(new OnClickListener() {
@@ -33,17 +37,25 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					Location currentBest = cbLocation.getCurrentBestLocation();
+					Location currentBest = cbService.getLocationManager().getCurrentBestLocation();
 					String newBestInfo = currentBest.getProvider() + 
 							" " + currentBest.getLatitude() + 
 							" " + currentBest.getLongitude() + 
 							" " + currentBest.getAccuracy();
 					editLog.setText(editLog.getText() + newBestInfo + "\n");
-					//Toast.makeText(getApplicationContext(), newBestInfo, Toast.LENGTH_LONG).show();
+					log(newBestInfo);
 				} catch(NullPointerException npe) {
-
 					
 				}
+			}
+		});
+
+		buttonStart.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				startService(serviceIntent);
 			}
 		});
 		
@@ -51,22 +63,23 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				cbLocation.stopGettingLocations();
+				stopService(serviceIntent);
 			}
 		});
 	}
-
 	
+	public void log(String message) {
+		System.out.println(message);
+	}
 	
 	@Override
 	protected void onStart() {
-		cbLocation.startGettingLocations();
 		super.onResume();
 	}
 
 	@Override
 	protected void onStop() {
-		cbLocation.stopGettingLocations();
+		stopService(serviceIntent);
 		super.onPause();
 	}	
 }
