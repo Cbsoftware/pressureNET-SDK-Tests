@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		serviceIntent = new Intent(this, CbService.class);
+		serviceIntent.putExtra("serverURL", "http://localhost:8000/");
 		
 		buttonGo = (Button) findViewById(R.id.buttonShowBest);
 		buttonStop = (Button) findViewById(R.id.buttonStop);
@@ -36,6 +37,7 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				log("get location");
 				try {
 					Location currentBest = cbService.getLocationManager().getCurrentBestLocation();
 					String newBestInfo = currentBest.getProvider() + 
@@ -43,9 +45,9 @@ public class MainActivity extends Activity {
 							" " + currentBest.getLongitude() + 
 							" " + currentBest.getAccuracy();
 					editLog.setText(editLog.getText() + newBestInfo + "\n");
-					log(newBestInfo);
+					log("location info " + newBestInfo);
 				} catch(NullPointerException npe) {
-					
+					npe.printStackTrace();
 				}
 			}
 		});
@@ -54,7 +56,7 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
+				log("start");
 				startService(serviceIntent);
 			}
 		});
@@ -63,6 +65,7 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				log("stop");
 				stopService(serviceIntent);
 			}
 		});
