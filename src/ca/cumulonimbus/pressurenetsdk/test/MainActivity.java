@@ -1,9 +1,15 @@
 package ca.cumulonimbus.pressurenetsdk.test;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,6 +25,34 @@ public class MainActivity extends Activity {
 	Button buttonStartSensors;
 	Button buttonStopSensors;
 	EditText editLog;
+	
+	Messenger mService = null;
+	boolean mBound;
+
+	public void stopCollectingData(View v) {
+		if (!mBound)
+			return;
+		Message msg = Message
+				.obtain(null, CbService.MSG_STOP, 0, 0);
+		try {
+			mService.send(msg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mService = new Messenger(service);
+            mBound = true;
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+            mBound = false;
+        }
+    };
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +74,9 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				log("get location");
 				try {
-					Location currentBest = cbService.getLocationManager().getCurrentBestLocation();
-					String newBestInfo = currentBest.getProvider() + 
-							" " + currentBest.getLatitude() + 
-							" " + currentBest.getLongitude() + 
-							" " + currentBest.getAccuracy();
-					editLog.setText(editLog.getText() + newBestInfo + "\n");
-					log("location info " + newBestInfo);
+					// Bind to CbService
+					bindService(new Intent(getApplicationContext(), CbService.class), mConnection,
+				            Context.BIND_AUTO_CREATE);
 				} catch(NullPointerException npe) {
 					npe.printStackTrace();
 				}
@@ -67,7 +97,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				log("stop sensors");
-				stopService(serviceIntent);
+				stopCollectingData(v);
+				
 			}
 		});
 	}
@@ -84,6 +115,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStop() {
 		stopService(serviceIntent);
+		if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
 		super.onPause();
 	}	
 }
