@@ -30,15 +30,18 @@ public class MainActivity extends Activity {
 	boolean mBound;
 
 	public void stopCollectingData(View v) {
-		if (!mBound)
-			return;
-		Message msg = Message
-				.obtain(null, CbService.MSG_STOP, 0, 0);
-		try {
-			mService.send(msg);
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		if (mBound) {	
+			Message msg = Message
+					.obtain(null, CbService.MSG_STOP, 0, 0);
+			try {
+				mService.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		} else {
+			log("error: not bound");
 		}
+		
 	}
 	
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -53,7 +56,6 @@ public class MainActivity extends Activity {
         }
     };
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
