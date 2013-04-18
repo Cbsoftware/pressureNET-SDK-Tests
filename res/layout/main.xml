@@ -1,5 +1,7 @@
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -24,16 +26,17 @@
         android:text="Stop" />        
         <EditText
             android:id="@+id/editLog"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_gravity="top"
-            android:editable="false"
+            android:editable="true"
             android:gravity="top"
+            android:ems="10"
             android:scrollbars="vertical"
-            android:textSize="8pt" >
-
-        </EditText>
+            android:textSize="8pt"
+         
+            android:inputType="textMultiLine" />
 
     </LinearLayout>
-
+</ScrollView>
     
