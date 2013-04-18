@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		serviceIntent = new Intent(this, CbService.class);
+		serviceIntent.putExtra("serverURL", "");
 		
 		buttonGo = (Button) findViewById(R.id.buttonShowBest);
 		buttonStop = (Button) findViewById(R.id.buttonStop);
