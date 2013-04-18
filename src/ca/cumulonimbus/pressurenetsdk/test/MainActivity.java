@@ -15,9 +15,9 @@ public class MainActivity extends Activity {
 	CbService cbService;
 	Intent serviceIntent;
 	
-	Button buttonGo;
-	Button buttonStart;
-	Button buttonStop;
+	Button buttonShowBestLocation;;
+	Button buttonStartSensors;
+	Button buttonStopSensors;
 	EditText editLog;
 	
 	@Override
@@ -28,12 +28,13 @@ public class MainActivity extends Activity {
 		serviceIntent = new Intent(this, CbService.class);
 		serviceIntent.putExtra("serverURL", "http://localhost:8000/");
 		
-		buttonGo = (Button) findViewById(R.id.buttonShowBest);
-		buttonStop = (Button) findViewById(R.id.buttonStop);
-		buttonStart = (Button) findViewById(R.id.buttonStart);
+		buttonShowBestLocation = (Button) findViewById(R.id.buttonShowBestLocation);
+		buttonStopSensors = (Button) findViewById(R.id.buttonStopSensors);
+		buttonStartSensors = (Button) findViewById(R.id.buttonStartSensors);
 
 		editLog = (EditText) findViewById(R.id.editLog);
-		buttonGo.setOnClickListener(new OnClickListener() {
+		
+		buttonShowBestLocation.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -52,20 +53,20 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		buttonStart.setOnClickListener(new OnClickListener() {
+		buttonStartSensors.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				log("start");
+				log("start sensors");
 				startService(serviceIntent);
 			}
 		});
 		
-		buttonStop.setOnClickListener(new OnClickListener() {
+		buttonStopSensors.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				log("stop");
+				log("stop sensors");
 				stopService(serviceIntent);
 			}
 		});
