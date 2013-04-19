@@ -23,6 +23,8 @@ public class MainActivity extends Activity {
 	CbService cbService;
 	Intent serviceIntent;
 
+	Location bestLocation;
+	
 	Button buttonShowBestLocation;;
 	Button buttonStartSensors;
 	Button buttonStopSensors;
@@ -37,7 +39,13 @@ public class MainActivity extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case CbService.MSG_BEST_LOCATION:
-				log(" Client Received from service");
+				bestLocation = (Location) msg.obj;
+				if(bestLocation!=null) {
+					log("Client Received from service " + bestLocation.getLatitude());
+					editLog.setText("best location : " + bestLocation.getLatitude() + " " + bestLocation.getLongitude());
+				} else {
+					log("location null");
+				}
 				break;
 			default:
 				log("received default message");
