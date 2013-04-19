@@ -15,7 +15,8 @@ import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
+import ca.cumulonimbus.pressurenetsdk.CbObservation;
 import ca.cumulonimbus.pressurenetsdk.CbService;
 
 public class MainActivity extends Activity {
@@ -24,11 +25,13 @@ public class MainActivity extends Activity {
 	Intent serviceIntent;
 
 	Location bestLocation;
-	
-	Button buttonShowBestLocation;;
-	Button buttonStartSensors;
-	Button buttonStopSensors;
-	EditText editLog;
+	CbObservation bestPressure;
+
+	Button buttonStartEverything;
+	Button buttonStopEverything;
+	Button buttonShowBestLocation;
+	Button buttonShowBestPressure;
+	TextView editLog;
 
 	boolean mBound;
 	private Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -47,6 +50,15 @@ public class MainActivity extends Activity {
 					log("location null");
 				}
 				break;
+			case CbService.MSG_BEST_PRESSURE:
+				bestPressure = (CbObservation) msg.obj;
+				if(bestPressure!=null) {
+					log("Client Received from service " + bestPressure.getObservationValue());
+					editLog.setText("best pressure: " + bestPressure.getObservationValue());
+				} else {
+					log("pressure null");
+				}
+				break;
 			default:
 				log("received default message");
 				super.handleMessage(msg);
@@ -54,7 +66,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private void stopCollectingData(View v) {
+	private void stopEverything(View v) {
 		if (mBound) {
 			Message msg = Message.obtain(null, CbService.MSG_STOP, 0, 0);
 			try {
@@ -68,6 +80,24 @@ public class MainActivity extends Activity {
 
 	}
 
+
+	private void askForBestPressure() {
+		if (mBound) {
+			log("asking for best pressure");
+			Message msg = Message.obtain(null, CbService.MSG_GET_BEST_PRESSURE,
+					0, 0);
+			try {
+				msg.replyTo = mMessenger;
+				mService.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		} else {
+			log("error: not bound");
+		}
+	}
+
+	
 	private void askForBestLocation() {
 		if (mBound) {
 			log("asking for best location");
@@ -110,11 +140,24 @@ public class MainActivity extends Activity {
 		serviceIntent.putExtra("serverURL", "http://localhost:8000/");
 
 		buttonShowBestLocation = (Button) findViewById(R.id.buttonShowBestLocation);
-		buttonStopSensors = (Button) findViewById(R.id.buttonStopSensors);
-		buttonStartSensors = (Button) findViewById(R.id.buttonStartSensors);
+		buttonStopEverything = (Button) findViewById(R.id.buttonStop);
+		buttonStartEverything= (Button) findViewById(R.id.buttonStart);
+		buttonShowBestPressure= (Button) findViewById(R.id.buttonShowBestPressure);
+		editLog = (TextView) findViewById(R.id.editLog);
 
-		editLog = (EditText) findViewById(R.id.editLog);
-
+		buttonShowBestPressure.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				log("get best pressure");
+				try {
+					askForBestPressure();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
 		buttonShowBestLocation.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -128,11 +171,11 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		buttonStartSensors.setOnClickListener(new OnClickListener() {
+		buttonStartEverything.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				log("bind to service, start sensors");
+				log("start everything");
 				bindService(
 						new Intent(getApplicationContext(), CbService.class),
 						mConnection, Context.BIND_AUTO_CREATE);
@@ -140,13 +183,12 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		buttonStopSensors.setOnClickListener(new OnClickListener() {
+		buttonStopEverything.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				log("stop sensors");
-				stopCollectingData(v);
-
+				log("stop everything");
+				stopEverything(v);
 			}
 		});
 	}
