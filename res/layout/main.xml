@@ -35,6 +35,19 @@
             android:layout_height="wrap_content"
             android:text="Stop CbService" />
 
+           <Button
+            android:id="@+id/buttonGetSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get Settings" />
+        
+           <Button
+            android:id="@+id/buttonSetSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Settings" />
+              
+        
         <TextView
             android:id="@+id/editLog"
             android:layout_width="fill_parent"

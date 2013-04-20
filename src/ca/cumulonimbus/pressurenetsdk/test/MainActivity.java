@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import ca.cumulonimbus.pressurenetsdk.CbObservation;
 import ca.cumulonimbus.pressurenetsdk.CbService;
+import ca.cumulonimbus.pressurenetsdk.CbSettingsHandler;
 
 public class MainActivity extends Activity {
 
@@ -26,11 +27,14 @@ public class MainActivity extends Activity {
 
 	Location bestLocation;
 	CbObservation bestPressure;
+	CbSettingsHandler activeSettings;
 
 	Button buttonStartEverything;
 	Button buttonStopEverything;
 	Button buttonShowBestLocation;
 	Button buttonShowBestPressure;
+	Button buttonGetSettings;
+	Button buttonSetSettings;
 	TextView editLog;
 
 	boolean mBound;
@@ -57,6 +61,14 @@ public class MainActivity extends Activity {
 					editLog.setText("best pressure: " + bestPressure.getObservationValue());
 				} else {
 					log("pressure null");
+				}
+				break;
+			case CbService.MSG_SETTINGS:
+				activeSettings = (CbSettingsHandler) msg.obj;
+				if(activeSettings!=null) {
+					log("Client Received from service " + activeSettings.getServerURL());
+				} else {
+					log("settings null");
 				}
 				break;
 			default:
@@ -129,6 +141,27 @@ public class MainActivity extends Activity {
 			mBound = false;
 		}
 	};
+	
+	public void setSettings() {
+		// TODO: Implement
+		log("set settings not yet implemented");
+	}
+	
+	public void getSettings() {
+		if (mBound) {
+			log("client: get settings");
+			Message msg = Message.obtain(null, CbService.MSG_GET_SETTINGS,
+					0, 0);
+			try {
+				msg.replyTo = mMessenger;
+				mService.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		} else {
+			log("error: not bound");
+		}
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +175,25 @@ public class MainActivity extends Activity {
 		buttonStopEverything = (Button) findViewById(R.id.buttonStop);
 		buttonStartEverything= (Button) findViewById(R.id.buttonStart);
 		buttonShowBestPressure= (Button) findViewById(R.id.buttonShowBestPressure);
+		buttonGetSettings = (Button) findViewById(R.id.buttonGetSettings);
+		buttonSetSettings = (Button) findViewById(R.id.buttonSetSettings);
 		editLog = (TextView) findViewById(R.id.editLog);
+		
+		buttonSetSettings.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				setSettings();
+			}
+		});
+		
+		buttonGetSettings.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				getSettings();
+			}
+		});
 
 		buttonShowBestPressure.setOnClickListener(new OnClickListener() {
 			
