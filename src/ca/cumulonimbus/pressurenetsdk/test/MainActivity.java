@@ -1,5 +1,7 @@
 package ca.cumulonimbus.pressurenetsdk.test;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,8 +37,11 @@ public class MainActivity extends Activity {
 	Button buttonShowBestPressure;
 	Button buttonGetSettings;
 	Button buttonSetSettings;
+	Button buttonRecents;
 	TextView editLog;
 
+	ArrayList <CbObservation> recents = new ArrayList<CbObservation>();
+	
 	boolean mBound;
 	private Messenger mMessenger = new Messenger(new IncomingHandler());
 	Messenger mService = null;
@@ -71,6 +76,12 @@ public class MainActivity extends Activity {
 					log("settings null");
 				}
 				break;
+			case CbService.MSG_RECENTS:
+				recents = (ArrayList<CbObservation>) msg.obj;
+				if(recents!=null) {
+					log("received "  + recents.size() + " recent observations in buffer");
+				}
+				break;
 			default:
 				log("received default message");
 				super.handleMessage(msg);
@@ -89,9 +100,7 @@ public class MainActivity extends Activity {
 		} else {
 			log("error: not bound");
 		}
-
 	}
-
 
 	private void askForBestPressure() {
 		if (mBound) {
@@ -124,7 +133,7 @@ public class MainActivity extends Activity {
 			log("error: not bound");
 		}
 	}
-
+	
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			log("client says : service connected");
@@ -163,6 +172,23 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	public void getRecents() {
+		if (mBound) {
+			log("client: get recents");
+			Message msg = Message.obtain(null, CbService.MSG_GET_RECENTS,
+					0, 0);
+			try {
+				msg.replyTo = mMessenger;
+				mService.send(msg);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		} else {
+			log("error: not bound");
+		}
+	}
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -177,7 +203,16 @@ public class MainActivity extends Activity {
 		buttonShowBestPressure= (Button) findViewById(R.id.buttonShowBestPressure);
 		buttonGetSettings = (Button) findViewById(R.id.buttonGetSettings);
 		buttonSetSettings = (Button) findViewById(R.id.buttonSetSettings);
+		buttonRecents = (Button) findViewById(R.id.buttonGetRecents);
 		editLog = (TextView) findViewById(R.id.editLog);
+		
+		buttonRecents.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				getRecents();
+			}
+		});
 		
 		buttonSetSettings.setOnClickListener(new OnClickListener() {
 			
