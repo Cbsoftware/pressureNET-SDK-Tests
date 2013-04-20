@@ -38,6 +38,8 @@ public class MainActivity extends Activity {
 	Button buttonGetSettings;
 	Button buttonSetSettings;
 	Button buttonRecents;
+	Button buttonGetRecents;
+	Button buttonTestAPI;
 	TextView editLog;
 
 	ArrayList <CbObservation> recents = new ArrayList<CbObservation>();
@@ -206,8 +208,17 @@ public class MainActivity extends Activity {
 		buttonShowBestPressure= (Button) findViewById(R.id.buttonShowBestPressure);
 		buttonGetSettings = (Button) findViewById(R.id.buttonGetSettings);
 		buttonSetSettings = (Button) findViewById(R.id.buttonSetSettings);
-		buttonRecents = (Button) findViewById(R.id.buttonGetRecents);
+		buttonTestAPI = (Button) findViewById(R.id.buttonTestAPI);
+		buttonRecents = (Button) findViewById(R.id.buttonRecents);
 		editLog = (TextView) findViewById(R.id.editLog);
+		
+		buttonTestAPI.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(getApplicationContext(), APITest.class));
+			}
+		});
 		
 		buttonRecents.setOnClickListener(new OnClickListener() {
 			

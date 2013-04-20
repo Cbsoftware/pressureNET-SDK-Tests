@@ -49,11 +49,19 @@
               
         
            <Button
-            android:id="@+id/buttonGetRecents"
+            android:id="@+id/buttonRecents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Get Recent Observations" />
-              
+       
+           
+           <Button
+            android:id="@+id/buttonTestAPI"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test API" />
+       
+           
         <TextView
             android:id="@+id/editLog"
             android:layout_width="fill_parent"
