@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
 
 	private void stopEverything(View v) {
 		if (mBound) {
-			Message msg = Message.obtain(null, CbService.MSG_STOP, 0, 0);
+			Message msg = Message.obtain(null, CbService.MSG_STOP_AUTOSUBMIT, 0, 0);
 			try {
 				mService.send(msg);
 			} catch (RemoteException e) {
@@ -96,7 +96,6 @@ public class MainActivity extends Activity {
 			log("error: not bound");
 		}
 	}
-
 	
 	private void askForBestLocation() {
 		if (mBound) {
@@ -176,10 +175,11 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				log("start everything");
+				startService(serviceIntent);
 				bindService(
 						new Intent(getApplicationContext(), CbService.class),
 						mConnection, Context.BIND_AUTO_CREATE);
-				startService(serviceIntent);
+				
 			}
 		});
 
