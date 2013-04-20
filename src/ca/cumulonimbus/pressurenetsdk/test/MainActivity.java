@@ -79,7 +79,10 @@ public class MainActivity extends Activity {
 			case CbService.MSG_RECENTS:
 				recents = (ArrayList<CbObservation>) msg.obj;
 				if(recents!=null) {
-					log("received "  + recents.size() + " recent observations in buffer");
+					log("received "  + recents.size() + " recent observations in buffer.");
+					for(CbObservation ob : recents) {
+						log(ob.toString());
+					}
 				}
 				break;
 			default:
