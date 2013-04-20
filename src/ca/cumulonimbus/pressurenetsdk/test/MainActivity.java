@@ -216,7 +216,14 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(getApplicationContext(), APITest.class));
+				Intent intent = new Intent(getApplicationContext(), APITest.class);
+				intent.putExtra("latitude", bestLocation.getLatitude());
+				intent.putExtra("longitude", bestLocation.getLongitude());
+				intent.putExtra("start_time", System.currentTimeMillis() - 3600000); // one hour ago
+				intent.putExtra("end_time", System.currentTimeMillis());
+				intent.putExtra("api_key", "");
+				intent.putExtra("format", "json");
+				startActivity(intent);
 			}
 		});
 		
