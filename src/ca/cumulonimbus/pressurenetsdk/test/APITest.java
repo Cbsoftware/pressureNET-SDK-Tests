@@ -12,6 +12,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -80,8 +82,22 @@ public class APITest extends Activity {
 	    	return responseText;
 		}
 		protected void onPostExecute(String result) {
-			System.out.println("datadownload post execute " + result);
+			//System.out.println("datadownload post execute " + result);
+			processJSONResult(result);
 		}
+    }
+    
+    void processJSONResult(String resultJSON) {
+        try {
+            JSONArray jsonArray = new JSONArray(resultJSON);
+            System.out.println("Result Count: " + jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+              JSONObject jsonObject = jsonArray.getJSONObject(i);
+              System.out.println(jsonObject.getDouble("reading"));
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
     }
 	
 	@Override
