@@ -34,6 +34,8 @@
         </activity>
         <activity android:name="ca.cumulonimbus.pressurenetsdk.test.APITest" >
         </activity>
+                <activity android:name="ca.cumulonimbus.pressurenetsdk.test.SDKTestSettings" >
+        </activity>
     </application>
 
 </manifest>

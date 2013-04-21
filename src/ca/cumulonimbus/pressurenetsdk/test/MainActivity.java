@@ -219,9 +219,8 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent(getApplicationContext(), APITest.class);
 				intent.putExtra("latitude", bestLocation.getLatitude());
 				intent.putExtra("longitude", bestLocation.getLongitude());
-				intent.putExtra("start_time", System.currentTimeMillis() - 3600000); // one hour ago
+				intent.putExtra("start_time", System.currentTimeMillis() - (60 * 60 * 1000)); // one hour ago
 				intent.putExtra("end_time", System.currentTimeMillis());
-				intent.putExtra("api_key", "");
 				intent.putExtra("format", "json");
 				startActivity(intent);
 			}

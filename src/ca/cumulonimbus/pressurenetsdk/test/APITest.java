@@ -8,12 +8,13 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +25,14 @@ public class APITest extends Activity {
 
 	Button recentLocalData;
 	
-	String serverURL = "https://pressurenet.cumulonimbus.ca/live/";
+	private double latitude = 0.0;
+	private double longitude = 0.0;
+	private long startTime = 0;
+	private long endTime = 0;
+	private String format = "json";
+	
+	
+	String serverURL = "https://pressurenet.cumulonimbus.ca/live/?";
 	
     private class APIDataDownload extends AsyncTask<String, String, String> {
     
@@ -33,23 +41,26 @@ public class APITest extends Activity {
 	    	String responseText = "";	    	
 	    	try {
 	    		DefaultHttpClient client = new DefaultHttpClient();
-	    		HttpPost post = new HttpPost(serverURL);
 	    		
+	    		System.out.println("contacting api...");
 	    		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-	    		nvps.add(new BasicNameValuePair("min_lat", ""));
-	    		nvps.add(new BasicNameValuePair("max_lat", ""));
-	    		nvps.add(new BasicNameValuePair("min_lon", ""));
-	    		nvps.add(new BasicNameValuePair("max_lon", ""));
-	    		nvps.add(new BasicNameValuePair("start_time", ""));
-	    		nvps.add(new BasicNameValuePair("end_time", ""));
-	    		nvps.add(new BasicNameValuePair("api_key", ""));
-	    		nvps.add(new BasicNameValuePair("format", "json"));
+	    		nvps.add(new BasicNameValuePair("min_lat", (latitude - 0.05) + ""));
+	    		nvps.add(new BasicNameValuePair("max_lat", (latitude + 0.05) + ""));
+	    		nvps.add(new BasicNameValuePair("min_lon", (longitude - 0.05) + ""));
+	    		nvps.add(new BasicNameValuePair("max_lon", (longitude + 0.05) + ""));
+	    		nvps.add(new BasicNameValuePair("start_time", startTime + ""));
+	    		nvps.add(new BasicNameValuePair("end_time", endTime + ""));
+	    		nvps.add(new BasicNameValuePair("api_key", SDKTestSettings.API_KEY));
+	    		nvps.add(new BasicNameValuePair("format", format));
 	    		
-	    		post.setEntity(new UrlEncodedFormEntity(nvps));
+	    		String paramString = URLEncodedUtils.format(nvps, "utf-8");
 	    		
-	    		
+	    		serverURL = serverURL + paramString;
+	    		System.out.println(serverURL);
+	    	    HttpGet get = new HttpGet(serverURL);
+	    	    		
 	    		// Execute the GET call and obtain the response
-	    		HttpResponse getResponse = client.execute(post);
+	    		HttpResponse getResponse = client.execute(get);
 	    		HttpEntity responseEntity = getResponse.getEntity();
 	    		
 	    		
@@ -78,13 +89,21 @@ public class APITest extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.api_test);
 		
-		recentLocalData = (Button) findViewById(R.id.buttonRecentLocalData);
+		Intent intent = getIntent();
+		latitude = intent.getDoubleExtra("latitude", 0.0);
+		longitude = intent.getDoubleExtra("longitude", 0.0);
+		startTime = intent.getLongExtra("start_time",0);
+		endTime = intent.getLongExtra("end_time",0);
+		format = intent.getStringExtra("format");
 		
-		recentLocalData.setOnClickListener(new OnClickListener() {
-			
+		System.out.println("latitude " + latitude + ", longitude " + longitude + ", start time " + startTime + ", end time " + endTime);
+		
+		recentLocalData = (Button) findViewById(R.id.buttonRecentLocalData);
+		recentLocalData.setOnClickListener(new OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				
+				APIDataDownload api = new APIDataDownload();
+				api.execute("");
 			}
 		});
 		
