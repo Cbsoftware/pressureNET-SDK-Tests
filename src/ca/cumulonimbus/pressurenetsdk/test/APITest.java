@@ -38,6 +38,7 @@ public class APITest extends Activity {
 
 	// hold raw results from the API in CbObservation objects
 	private ArrayList<CbObservation> apiCbObservationResults = new ArrayList<CbObservation>();
+	
 
 	String serverURL = "https://pressurenet.cumulonimbus.ca/live/?";
 
@@ -127,7 +128,9 @@ public class APITest extends Activity {
 				}
 			}
 			
-			System.out.println(apiCbObservationResults.size() + " nearby pressure readings");
+			//System.out.println(apiCbObservationResults.size() + " nearby pressure readings");
+			CbObservation.addDatesAndTrends(apiCbObservationResults);
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
