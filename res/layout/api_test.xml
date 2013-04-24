@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:text="Test pressureNET API" />
 
-    <com.google.android.maps.MapView
+    <ca.cumulonimbus.pressurenetsdk.CbMapView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
