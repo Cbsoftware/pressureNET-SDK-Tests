@@ -15,7 +15,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -23,10 +22,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 import ca.cumulonimbus.pressurenetsdk.CbObservation;
 
-public class APITest extends Activity {
+import com.google.android.maps.MapActivity;
+
+public class APITest extends MapActivity {
 
 	Button recentLocalData;
 
@@ -162,5 +162,11 @@ public class APITest extends Activity {
 			}
 		});
 
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

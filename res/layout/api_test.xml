@@ -3,11 +3,18 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <Button android:id="@+id/buttonRecentLocalData"
+    <Button
+        android:id="@+id/buttonRecentLocalData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test pressureNET API"
-        />
-   
-    
+        android:text="Test pressureNET API" />
+
+    <com.google.android.maps.MapView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="0TTXlD0TEfWDjnR7s3E8h5-W0a6LaNTmx5oNkzw"
+        android:clickable="true" />
+
 </LinearLayout>

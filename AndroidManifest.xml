@@ -20,7 +20,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <uses-library android:name="android.test.runner" />
-
+		<uses-library android:name="com.google.android.maps" />
         <service
             android:name="ca.cumulonimbus.pressurenetsdk.CbService"
             android:enabled="true" />
