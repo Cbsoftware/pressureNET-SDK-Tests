@@ -15,20 +15,27 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import ca.cumulonimbus.pressurenetsdk.CbMapView;
 import ca.cumulonimbus.pressurenetsdk.CbObservation;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
 
 public class APITest extends MapActivity {
 
 	Button recentLocalData;
+	SurfaceView surfaceGraph;
 
 	private double latitude = 0.0;
 	private double longitude = 0.0;
@@ -38,7 +45,6 @@ public class APITest extends MapActivity {
 
 	// hold raw results from the API in CbObservation objects
 	private ArrayList<CbObservation> apiCbObservationResults = new ArrayList<CbObservation>();
-	
 
 	String serverURL = "https://pressurenet.cumulonimbus.ca/live/?";
 
@@ -122,20 +128,45 @@ public class APITest extends MapActivity {
 							.getDouble("tzoffset"));
 					singleObs.setSharing(jsonObject.getString("sharing"));
 					singleObs.setUser_id(jsonObject.getString("user_id"));
+					singleObs.setObservationValue(jsonObject
+							.getDouble("reading"));
 					apiCbObservationResults.add(singleObs);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			
-			//System.out.println(apiCbObservationResults.size() + " nearby pressure readings");
-			CbObservation.addDatesAndTrends(apiCbObservationResults);
-			
-			
+
+			ArrayList<CbObservation> detailedList = CbObservation
+					.addDatesAndTrends(apiCbObservationResults);
+
+			graphDetailedMeasurements(detailedList);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	public void graphDetailedMeasurements(ArrayList<CbObservation> detailedList) {
+		System.out.println("downloaded " + detailedList.size() + " points");
+	}
+
+	public void setMap() {
+		CbMapView cbMap = (CbMapView) findViewById(R.id.mapview);
+		MapController mc = cbMap.getController();
+		LocationManager lm = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+		Location loc = lm
+				.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		mc.setZoom(15);
+		if (loc.getLatitude() != 0) {
+			// log("setting center " + loc.getLatitude() + " " +
+			// loc.getLongitude());
+			mc.animateTo(new GeoPoint((int) (loc.getLatitude() * 1E6),
+					(int) (loc.getLongitude() * 1E6)));
+		} else {
+
+		}
 	}
 
 	@Override
@@ -153,6 +184,8 @@ public class APITest extends MapActivity {
 		System.out.println("latitude " + latitude + ", longitude " + longitude
 				+ ", start time " + startTime + ", end time " + endTime);
 
+		surfaceGraph = (SurfaceView) findViewById(R.id.surfaceGraph);
+
 		recentLocalData = (Button) findViewById(R.id.buttonRecentLocalData);
 		recentLocalData.setOnClickListener(new OnClickListener() {
 			@Override
@@ -162,6 +195,7 @@ public class APITest extends MapActivity {
 			}
 		});
 
+		setMap();
 	}
 
 	@Override
