@@ -1,0 +1,8 @@
+.project
+*~
+*.swp
+*.swo
+*.swn
+bin/*
+.classpath
+gen/*
