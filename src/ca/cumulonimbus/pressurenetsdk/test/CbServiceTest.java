@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import static org.mockito.Mockito.doReturn;
 import junit.framework.TestSuite;
+import junit.framework.Assert.*;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Messenger;
@@ -279,7 +280,7 @@ public class CbServiceTest extends ServiceTestCase<CbService> {
 		
 		service.setActiveStreams(streams);				
 		service.startSensorStream(sensorId, messenger);
-		verify(service).log("CbService not starting live sensor streaming " + sensorId + ", already streaming");     
+		verify(service).log("CbService not starting live sensor streaming 1, already streaming");     
 		
 	}
 
@@ -287,13 +288,53 @@ public class CbServiceTest extends ServiceTestCase<CbService> {
 	 * Test method for {@link ca.cumulonimbus.pressurenetsdk.CbService#stopSensorStream(int)}.
 	 */
 	public void testStopSensorStream() {
-		fail("Not yet implemented");
+		CbService service = setUpService();
+		int sensorId1 = 1;
+		Handler mhandler1 = new Handler();
+		Messenger messenger1 = new Messenger(mhandler1);
+		int sensorId2 = 2;
+		Handler mhandler2 = new Handler();
+		Messenger messenger2 = new Messenger(mhandler2);
+		ArrayList<CbSensorStreamer> alist = new ArrayList<CbSensorStreamer>();
+		CbSensorStreamer alreadyStreaming1 = service.new CbSensorStreamer(sensorId1, messenger1);
+		CbSensorStreamer alreadyStreaming2 = service.new CbSensorStreamer(sensorId2, messenger2);
+		
+		
+		
+		ArrayList<CbSensorStreamer> postList = new ArrayList<CbSensorStreamer>();
+		postList.add(alreadyStreaming2);
+        ArrayList<CbSensorStreamer> streams = spy(alist);
+        CbSensorStreamer sensorStreamSpy = spy(alreadyStreaming1);
+		
+        alist.add(sensorStreamSpy);
+		alist.add(alreadyStreaming2);
+        
+		service.setActiveStreams(alist);	
+		
+		service.stopSensorStream(sensorId1);
+		
+		verify(service).log("CbService stopping live sensor streaming " + sensorId1);
+
+		verify(sensorStreamSpy).stopSendingData();
+		
+
+		assertEquals(postList, alist);
+	}
+	
+	public void testStopSensorStreamNotStreaming() {
+		CbService service = setUpService();
+		int sensorId = 1;
+		service.stopSensorStream(sensorId);
+		verify(service).log("CbService not stopping live sensor streaming 1 sensor not running");
 	}
 
 	/**
 	 * Test method for {@link ca.cumulonimbus.pressurenetsdk.CbService#collectNewObservation()}.
 	 */
 	public void testCollectNewObservation() {
+		CbService service = setUpService();
+		verify(service).log("cb collecting new observation");
+
 		fail("Not yet implemented");
 	}
 
